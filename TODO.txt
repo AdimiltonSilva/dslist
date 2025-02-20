@@ -1,0 +1,279 @@
+-- Intensião JAVA Spring
+
+#01 - aula1 - Passos
+    - Baixar o projeto no github
+      https://github.com/devsuperior/dslist-backend
+    - Criar projeto / lib Maven
+    - Salvar no github
+    - Arquivos Properties, entidade Game, ORM
+    - Seed dos games
+    - GameMinDTO, GameRepository, GameService, GameController
+
+- 00:00 ~ 46:00
+- Foi preciso criar uma chave SSH para efetuar o clone do projeto
+- Baixar o STS - Spring Tools Suite
+- 35:00
+> git clone git@github.com:devsuperior/dslist-backend.git
+- 37:00
+> git checkout aula1
+- 37:30
+- Abir o STS
+  - File > Import > Maven > Existing Maven Projects
+  - [Next] [Browse folder] 
+  - C:\Desen\Java\DevSuperior\dslist-backend [Finished]
+- 38:00 
+  - Se não estiver aparecendo a aba "Boot Sashboard"
+    - Menu > Windows > Perspective > Reset Perspective
+  - botão direito > restart -> para rodar o projeto
+  - Testou -> Deletar o projeto e manter os arquivos
+
+- 42:10 - Criar projeto / lib Maven
+- Abrir o browser
+  - https://start.spring.io
+  - Project -> Maven
+  - Linguage -> Java
+  - Spring Boot -> 3.4.2+
+  - Project Metadata
+    - Group: com.devsuperior
+    - Artifact: dslist
+    - Name: dslist
+    - Description: Intensivão Java Spring
+    - Package name: com.devsuperior.dslist
+    - Packaging: Jar
+    - Java: 21
+  - 44:00 - Dependencies:
+    - Spring Web Web
+    - Spring Data JPA SQL
+    - H2 Database SQL
+    - PostgreSQL Driver SQL
+- Clicar no botão [Generate]
+  - Salvar na pasta de desenvolvimento
+  - Descompactar
+- 45:45 - Importar o projeto
+  - Menu > Import > Exiting Maven Projects
+    - Selecionar a pasta dslist do projeto
+- 46:20 - lib Maven
+  - Atualizar o arquivo do Maven
+    - https://github.com/devsuperior/dslist-backend
+    - README.md
+      - Trechos do código
+      - Plug-in Maven
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.1.0</version> <!--$NO-MVN-MAN-VER$ -->
+        </plugin>
+- 49:25 - Salvar no github
+  - No seu github pessoal
+  - New Repository > dslist
+  - Abrir o terminal Gitbash na pasta do projeto
+    - C:\Desen\Java\DevSuperior\dslist
+      - git init 
+      - git add .
+      - git commit -m "Projeto criado"
+      - git branch -M main
+      - git@github.com:AdimiltonSilva/dslist.git
+      - git push -u origin main
+- 52:40 - Arquivos Properties, entidade Game, ORM
+  - https://github.com/devsuperior/dslist-backend
+    - Arquivos Properties
+    - Copiar...
+      - application.properties
+        spring.profiles.active=${APP_PROFILE:test}
+        spring.jpa.open-in-view=false
+        cors.origins=${CORS_ORIGINS:http://localhost:5173,http://localhost:3000}
+      - No STS procurar a pasta
+        - src\main\resources\application.properties
+        - colar o código acima copiado
+      - Copiar e colar a pasta src\main\resources\application.properties e renomear para src\main\resources\application-test.properties
+      - abrir este arquivo, limpar o conteúdo e adicionar o código abaixo de configuração do banco de teste H2
+        # H2 Connection
+        spring.datasource.url=jdbc:h2:mem:testdb
+        spring.datasource.username=sa
+        spring.datasource.password=
+
+        # H2 Client
+        spring.h2.console.enabled=true
+        spring.h2.console.path=/h2-console
+
+        # Show SQL
+        spring.jpa.show-sql=true
+        spring.jpa.properties.hibernate.format_sql=true
+    
+    - 56:35 - Entidade Game - criar a class Game
+      - botão direito na pasta src\main\java
+        New > class
+          - Package: com.devsuperior.dslist.entities
+          - Name: Game
+      - 57:42 - criar a class de acordo com o Modelo de Domínio DSList no github
+        - Criar o construtor vazio
+        - Criar o construtor com argumentos
+          - botão direito -> Source > Generate Constructor using Fields...
+        - Criar os métodos Getters e Setters
+          - botão direito -> Source > Generate Getters and Setter...
+        - Criar os métodos Equals e hashCode
+          - botão direito -> Source > Generate hashCode() and equals()...
+
+    - 01:03:00 - ORM
+      - Adicionar uma anotation em cima do nome da class Game
+        @Entity, depois CTRL+ SHIFT + O para importar as bibliotecas (import jakarta.persistence.Entity;)
+        - Esta anotation vai configurar a classe Java para que ela seja equivalente a uma tabela do banco de dados
+      - Customizar o nome da tabela no banco
+        @Table, depois CTRL+ SHIFT + O para importar as bibliotecas (import jakarta.persistence.Table;)
+        @Table(name = "tb_game")
+        - Nas properties da class adicionar: 
+          @Id - definir campo chave primaria
+          @GeneratedValue - definir campor auto-incremento
+          @Column(name = "game_year") - renomerar o campo da tabela
+          @Column(columnDefinition = "TEXT") - definir campo de texto longo
+    - 01:08:00 - Restart no projeto
+      - Abrir o browser e digitar a url 
+        http://localhost:8080/h2-console
+      - Configurar o H2
+        - Abrir o arquivo "src\main\resources\application-test.properties" para pegar os dados da configuração
+          - JDBC URL=jdbc:h2:mem:testdb
+          - User Name: sa
+          - Password: vazio
+
+- 01:11:50 - Seed dos games 
+  - Popular do banco de dados
+
+- 01:21:50 - GameMinDTO, GameRepository, GameService, GameController
+  - GameMinDTO - resposaável para customizar a representação dos dados do banco de dados projetados
+    - Criar uma class DTO (GameMinDTO) com alguns campos
+    - Criar construtor com o parâmetro da Entidade Game
+    - Criar apenas os Getters da class
+  - GameRepository - responsável por interagir com o banco de dados
+    - 01:27:55 - Fazer consulta no banco de dados
+      - Criar uma interface repository para acesso a dados
+        - 01:29:30 - botão direito na pasta dslist -> New > Interface
+                   - package: com.devsuperior.dslist.repositories
+                   - name: GameRepository
+          - para usar Spring é preciso extender a class
+            ex: public interface GameRepository extends JpaRepository<Game, Long> {}
+  - GameService - reponsável por implementar a regra de negócio
+    - Criar uma class de serviços (service)
+      - 01:32:15 - botão direito na pasta dslist -> New > Class > 
+                  - pakage: com.devsuperior.dslist.services
+                  - name: GameService
+        - Registrar a class como sendo um componente do sistema
+          - @Component ou @Service
+          - @Autowired - Injetar uma instancia do GameRepository dentro do GameService
+  - GameController - É a porta de entrada para o back-end, responsável para disponibilizar a API
+    - Criar uma class de controlador (controller)
+      - 01:41:40 - botão direito na pasta dslist -> New > Class > 
+                 - pakage: com.devsuperior.dslist.controllers
+                 - name: GameController
+        - Configurar a class Controller
+          - @RestController
+            @RequestMapping(value = "/games")
+            public class GameController {...}
+          - @Autowired - injetar um service
+            private GameService gameService;
+          - @GetMapping - mapear o método com o verbo http
+            public List<GameMinDTO> findAll() {...}
+
+- 01:55:00 - fim da aula 01
+https://www.youtube.com/watch?v=-IPoGm5btbE
+
+#02 - Aula 02 - Passos
+    - Baixar o projeto no github
+      https://github.com/devsuperior/dslist-backend
+    - Implementar modelo de Domínio
+    - Atualizar seed da base de dados
+    - GameDTO, busca game por Id
+    - Busca todas listas em /list
+
+  - 19:45 - Criar a classe GameList
+    - Definir as property 
+    - Criar o construtor vazio
+    - Criar o contrutor com os argumentos 
+      - botão direito - Source -> Generate Constructor using Fields...
+        - remover o metodo super()
+    - Criar os métodos Getters e Setters
+      - botão direito - Source -> Generate Getters ans Setters...
+    - Criar o hashCode() e equals()...
+      - botão direito - Source -> Generate hashCode() and equals()...
+    - 32:52 - Criar as anotation @Entity e Table para a classe
+    - Criar as anotation @Id e GeneratedValue para a property id
+  - 22:15 - Criar a classe Belonging - posicionamento
+    - 25:25 - Criar a property
+      ex: public BelongingPK id;
+  - 24:40 - Criar a classe auxiliar BelongingPK
+      - Criar as property da Belonging
+        ex:
+          private Game game;
+	        private GameList list;
+      - Criar o construtor vazio
+      - Criar o construtor com os argumentos
+        - botão direito - Source -> Generate Constructor using Fields...
+        - remover o metodo super()
+  - 27:10 - Configurar as associações com Game e GameList
+    - @ManyToOne - CTRL + SHIFT + O
+    - @JoinColumn(name = "game_id") para a property game
+    - @JoinColumn(name = "list_id") para a property list
+    - Adicionar a anotation @Embeddable para a classe BelongingPK
+    - Adicionar a anotation @EmbeddedId para as property da classe Belonging
+      ex: @EmbeddedId
+          	private BelongingPK id = new BelongingPK();
+      - Adicionar a anotation @Entity e Table para a classe Belonging
+      - Criar o construtor vazio para a classe Belonging
+      - Criar o construtor com os argumentos para a classe Belonging
+        ex:
+          public Belonging(Game game, GameList list, Integer position) {
+            id.setGame(game);
+            id.setList(list);
+            this.position = position;
+          }
+      - 31:50 - Criar os métodos Getters e Setters
+        - botão direito - Source -> Generate Getters ans Setters...
+      - 32:00 - Criar o hashCode() e equals()...
+        - botão direito - Source -> Generate hashCode() and equals()...
+      - botão direito no projeto e restart
+      - 35:05 - Inserir registros no banco. (Seed do banco)
+        - abrir o src/main/resources/import.sql e adicionar o script de insert do github
+        - 40:40 - Comitar alterações
+          - git commit -m "Database seed update"
+        - 41:50 - Criar endpoint no Postman para buscar o game por Id
+        - 43:10 - Implementar o para buscar o game por Id
+        - 45:20 - New -> Class -> Name: GameDTO
+          - Copiar as property do entities/Game.java
+            - usar a class BeanUtils para mapear todas as properties da entidade
+            - 49:20 - Criar os métodos Getters e Setters
+              - botão direito - Source -> Generate Getters ans Setters... (select all)
+        - 49:50 - Criar o método para buscar o game por id dentro do GameService
+          - 52:50 - colocar uma anotation transacional "@Transaction(readOnly = true)" do spring
+        - 54:00 - GameController - criar o método findById
+        - 57:00 - Comitar o projeto
+        - 57:35 - Buscar todas as listas - criar o endpoint no Postman
+          - http://localhost:8080/lists
+        - 58:15 - Criar o DTO, Repository, Service e Controller das listas
+          - 58:40 - Criando a class DTO
+            - botão direito -> New -> Class -> Name: GameListDTO
+          - 01:00:20 - Criando a class Repository
+            - CTRL+C, CTRL+V, duplicar a class GameRepository e mudar para GameListRepository
+          - 01:01:00 - Criando a class Service
+            - CTRL+C, CTRL+V, duplicar a class GameService e mudar para GameListService
+          - 01:03:00 - Criando a class Controller
+            - CTRL+C, CTRL+V, duplicar a class GameController e mudar para GameListController
+          - 01:10:00 - Comitar o projeto
+            - git add . 
+            - git commit -m "Get lists - Buscar todas as listas"
+        - 01:05:25 - Consulta SQL, projection, busca de games por lista
+          - 01:11:50 - Copiar o script de consulta e colocar no GameRepository
+          - 01:13:20 - Fazer consulta SQL na mão, é preciso colocar na anotation @Query a condição:
+            - @Query(nativeQuery = true, value = """ ...
+            - obs: quando utilizamos o nativeQuery o resultado da consulta tem que ser uma interface que chamamos de Projection. ex: List<GameMinProjection>
+            - Criar a interface GameMinProjection
+              - botão direito no pacote principal: com.devsuperior.dslit
+                - New -> Interface...
+                  Package: com.devsuperior.dslit.projections
+                  Name: GameMinProjection
+              - 01:15:15 - Criar métodos Getters de acordo com a consulta, para cada campo da query
+              - 01:18:10 - Criar o endpoint no Postman
+              - 01:19:40 - Criar o método searchByList no GameService
+              - 01:21:30 - Criar um construtor na GameMinDTO
+              - 01:22:33 - Criar a class Controller dentro da GameListController
+                           porque o endpoint aponta para uma lista
+                           - mapear o listId na rota
+              
